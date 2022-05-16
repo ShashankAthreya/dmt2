@@ -87,21 +87,27 @@ for i in range(1, 13):
     months.append((i, datetime.date(1900, i, 1).strftime('%B')))
 
 
-df_date_time = df_has_booked['date_time']
+df_date_time = df_has_booked[['date_time']]
 
+summer = df_date_time.loc[((df_date_time['date_time'].dt.month > months[4][0]) & (
+    df_date_time['date_time'].dt.month < months[8][0]))]
+fall = df_date_time.loc[((df_date_time['date_time'].dt.month > months[8][0]) & (
+    df_date_time['date_time'].dt.month < months[11][0]))]
+spring = df_date_time.loc[((df_date_time['date_time'].dt.month > months[2][0]) & (
+    df_date_time['date_time'].dt.month < months[5][0]))]
+winter = df_date_time.loc[((df_date_time['date_time'].dt.month == months[10][0]) | (
+    df_date_time['date_time'].dt.month == months[0][0]) | (df_date_time['date_time'].dt.month == months[1][0]))]
 
-# summer = df_date_time.loc[((df_date_time['date_time'].dt.month > months[4][0]) & (
-#     df_date_time['date_time'].dt.month < months[8][0]))]
-# fall = df_date_time.loc[((df_date_time['date_time'].dt.month > months[8][0]) & (
-#     df_date_time['date_time'].dt.month < months[11][0]))]
-# spring = df_date_time.loc[((df_date_time['date_time'].dt.month > months[2][0]) & (
-#     df_date_time['date_time'].dt.month < months[5][0]))]
-# winter = df_date_time.loc[((df_date_time['date_time'].dt.month == months[10][0]) | (
-# df_date_time['date_time'].dt.month == months[0][0]) | (df_date_time['date_time'].dt.month == months[1][0]))]
-#
-
-
+summer.head()
 # %%%
 
-#
+# adding season as a column
+df_date_time['date_time'].dt.month.head()
+summer['date_time'].dt.month.head()
+
+print(df_date_time[['date_time']][0])
+
+# if(df_date_time[['date_time']][0] == summer[['date_time']][0]):
+#     print('hei')
+
 # %%
