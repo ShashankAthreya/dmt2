@@ -86,19 +86,22 @@ months = []
 for i in range(1, 13):
     months.append((i, datetime.date(1900, i, 1).strftime('%B')))
 
-summer = df_has_booked.loc[((df_has_booked['date_time'].dt.month > months[4][0]) & (
-    df_has_booked['date_time'].dt.month < months[8][0]))]
-fall = df_has_booked.loc[((df_has_booked['date_time'].dt.month > months[8][0]) & (
-    df_has_booked['date_time'].dt.month < months[11][0]))]
-spring = df_has_booked.loc[((df_has_booked['date_time'].dt.month > months[2][0]) & (
-    df_has_booked['date_time'].dt.month < months[5][0]))]
-winter = df_has_booked.loc[((df_has_booked['date_time'].dt.month == months[10][0]) | (
-    df_has_booked['date_time'].dt.month == months[0][0]) | (df_has_booked['date_time'].dt.month == months[1][0]))]
 
-winter.head()
+df_date_time = df_has_booked['date_time']
+
+
+# summer = df_date_time.loc[((df_date_time['date_time'].dt.month > months[4][0]) & (
+#     df_date_time['date_time'].dt.month < months[8][0]))]
+# fall = df_date_time.loc[((df_date_time['date_time'].dt.month > months[8][0]) & (
+#     df_date_time['date_time'].dt.month < months[11][0]))]
+# spring = df_date_time.loc[((df_date_time['date_time'].dt.month > months[2][0]) & (
+#     df_date_time['date_time'].dt.month < months[5][0]))]
+# winter = df_date_time.loc[((df_date_time['date_time'].dt.month == months[10][0]) | (
+# df_date_time['date_time'].dt.month == months[0][0]) | (df_date_time['date_time'].dt.month == months[1][0]))]
+#
+
+
 # %%%
 
-# Check earliest date
-df_has_booked.sort_values(by=['date_time']).head()
-
+#
 # %%
