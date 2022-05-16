@@ -92,8 +92,8 @@ fall = df_has_booked.loc[((df_has_booked['date_time'].dt.month > months[8][0]) &
     df_has_booked['date_time'].dt.month < months[11][0]))]
 spring = df_has_booked.loc[((df_has_booked['date_time'].dt.month > months[2][0]) & (
     df_has_booked['date_time'].dt.month < months[5][0]))]
-winter = df_has_booked.loc[((df_has_booked['date_time'].dt.month > months[10][0]) & (
-    df_has_booked['date_time'].dt.month < months[3][0]))]
+winter = df_has_booked.loc[((df_has_booked['date_time'].dt.month == months[10][0]) | (
+    df_has_booked['date_time'].dt.month == months[0][0]) | (df_has_booked['date_time'].dt.month == months[1][0]))]
 
 winter.head()
 # %%%
