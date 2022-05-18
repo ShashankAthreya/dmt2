@@ -63,11 +63,6 @@ df_test = pd.read_csv(testData)
 # plt.figure(figsize=(100, 100))
 # sns.heatmap(corr, cbar=True, square=True, fmt='.1f',
 #             annot=True, annot_kws={'size': 35}, cmap='Greens')
-# %%
-
-# Dropping unecessary columns
-df_train = df_train.drop(['visitor_hist_starrating', 'prop_id', 'prop_log_historical_price', 'gross_booking_usd',
-                         'srch_destination_id ',  'srch_booking_window', 'srch_query_affinity_score', 'random_bool'], axis=1)
 
 # %%
 
@@ -76,7 +71,13 @@ df_train.index.name = 'id'
 # ////////////// ID IS INDEX ACCORDING TO THE INITIAL READ CSV
 # %%
 
-#
+# Combining srch_adult_cnt and srch_children_cnt columns
+df_train['search_people_count'] = df_train['srch_adults_count'] + \
+    df_train['srch_children_count']
+# Dropping unecessary columns
+df_train = df_train.drop(['srch_adults_count', 'srch_children_count', 'visitor_hist_starrating', 'prop_log_historical_price',
+                         'srch_destination_id',  'srch_booking_window', 'srch_query_affinity_score', 'random_bool', 'gross_bookings_usd'], axis=1)
+
 
 # %%
 
@@ -85,8 +86,8 @@ df_newTrain = df_train.replace(np.nan, 0)
 df_newTrain.head()
 # %%
 
-# Keeping only those who have made a booking
-df_has_booked = df_newTrain.loc[(df_newTrain['booking_bool'] == 1)]
+# Keeping only those who have clicked
+df_has_booked = df_newTrain.loc[(df_newTrain['click_bool'] == 1)]
 df_has_booked.head()
 # %%
 
@@ -159,12 +160,11 @@ for index in df_has_booked_id_list:
 # df_has_booked.head(5)
 # %%
 
-# Getting the time of day
-time = df_date_time['date_time'].dt.hour
-# time.head()
-time.loc[(time == 2)]
 
 # %%
+
+# Getting the time of day
+time = df_date_time['date_time'].dt.hour
 
 # times of day
 morning = time.loc[(time >= 6) & (time < 12)]
@@ -206,5 +206,23 @@ for index in range(len(time_of_days)):
 # %%
 
 # Time to drop some columns
+df_has_booked.drop(['date_time', ], axis=1)
 
-df_has_booked.drop(['date_time', 'user_id', ], axis=1)
+# Try to ... keep those who clicked, even if they didnt book a hotel
+# %%
+
+# Modeling time! //////////
+
+# srch_id1 = df_newTrain.loc[(df_newTrain['srch_id'] == 839)]
+# srch_id1.head(30)
+# %%
+
+# Finding out the correlation between the features
+corr = df_has_booked.corr()['click_bool'].sort_values()
+corr.shape
+plt.figure(figsize=(100, 100))
+sns.heatmap(corr, cbar=True, square=True, fmt='.1f',
+            annot=True, annot_kws={'size': 35}, cmap='Greens')
+# %%
+
+# %%
