@@ -2,6 +2,7 @@
 
 # importing libraries
 import datetime
+from argon2 import DEFAULT_TIME_COST
 import pandas as pd
 import math
 import numpy as np
@@ -62,12 +63,21 @@ df_test = pd.read_csv(testData)
 # plt.figure(figsize=(100, 100))
 # sns.heatmap(corr, cbar=True, square=True, fmt='.1f',
 #             annot=True, annot_kws={'size': 35}, cmap='Greens')
+# %%
+
+# Dropping unecessary columns
+df_train = df_train.drop(['visitor_hist_starrating', 'prop_id', 'prop_log_historical_price', 'gross_booking_usd',
+                         'srch_destination_id ',  'srch_booking_window', 'srch_query_affinity_score', 'random_bool'], axis=1)
 
 # %%
 
 # keep index name
 df_train.index.name = 'id'
 # ////////////// ID IS INDEX ACCORDING TO THE INITIAL READ CSV
+# %%
+
+#
+
 # %%
 
 # Replacing NaNs with zeroes
@@ -148,3 +158,53 @@ for index in df_has_booked_id_list:
 
 # df_has_booked.head(5)
 # %%
+
+# Getting the time of day
+time = df_date_time['date_time'].dt.hour
+# time.head()
+time.loc[(time == 2)]
+
+# %%
+
+# times of day
+morning = time.loc[(time >= 6) & (time < 12)]
+midday = time.loc[(time >= 12) & (time < 18)]
+evening = time.loc[(time >= 18) & (time <= 23)]
+night = time.loc[(time >= 0) & (time < 6)]
+
+# ids of times of day
+morning_id = morning.index.to_list()
+midday_id = midday.index.to_list()
+evening_id = evening.index.to_list()
+night_id = night.index.to_list()
+
+# Creating a time_of_day dataframe with all the indeces
+df_morning = {'time_of_day': 'morning', 'time_of_day_id': morning_id}
+df_morning = pd.DataFrame(df_morning)
+
+df_midday = {'time_of_day': 'midday', 'time_of_day_id': midday_id, }
+df_midday = pd.DataFrame(df_midday)
+
+df_evening = {'time_of_day': 'evening', 'time_of_day_id': evening_id, }
+df_evening = pd.DataFrame(df_evening)
+
+df_night = {'time_of_day': 'night', 'time_of_day_id': night_id}
+df_night = pd.DataFrame(df_night)
+
+time_of_days = pd.concat(
+    [df_morning, df_midday, df_evening, df_night], ignore_index=True)
+
+# adding a time of day column to the original dataframe
+df_has_booked['time_of_day'] = pd.DataFrame(columns=['time_of_day'])
+
+# Adding time of day values to the column in df_has_booked
+for index in range(len(time_of_days)):
+    df_has_booked_id = time_of_days.at[index, 'time_of_day_id']
+    time_of_day = time_of_days.at[index, 'time_of_day']
+    df_has_booked.at[df_has_booked_id, 'time_of_day'] = time_of_day
+
+# %%
+
+# Time to drop some columns
+
+df_has_booked.drop(['date_time', 'user_id', ], axis=1)
