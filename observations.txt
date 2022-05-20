@@ -181,5 +181,93 @@ gross_bookings_usd             4819957
 booking_bool                         0
 dtype: int64
 ##################################################################################
-
+Range of training data with NaNs
 ##################################################################################
+visitor_hist_adr_usd
+0.0 1958.7
+visitor_hist_starrating
+1.41 5.0
+prop_review_score
+0.0 5.0
+prop_location_score2
+0.0 1.0
+srch_query_affinity_score
+-326.5675 -2.4941
+orig_destination_distance
+0.01 11666.64
+gross_bookings_usd
+0.0 159292.38
+Competition
+1716808 1717038 diff
+1716808 1716808 rate
+1716808 1729602 inv
+0 7 comp
+-1.0 2.0 rate
+-5.0 6.0 inv
+-29947.0 212639.0 diff
+##################################################################################
+Range of testing data with NaNs
+##################################################################################
+visitor_hist_adr_usd
+0.0 2768.93
+visitor_hist_starrating
+1.0 5.0
+prop_review_score
+0.0 5.0
+prop_location_score2
+0.0 1.0
+srch_query_affinity_score
+-250.7864 -2.4941
+orig_destination_distance
+0.01 11692.98
+Competition
+1727616 1727864 diff
+1727616 1727616 rate
+1727616 1740617 inv
+0 8 comp
+-1.0 2.0 rate
+-6.0 6.0 inv
+-41625.777777777774 719983.0 diff
+##################################################################################
+Observatiaon on model for click_bool
+##################################################################################
+LightGBM Model accuracy score: 0.9554
+Training-set accuracy score: 0.9552
+Training set score: 0.9552
+Test set score: 0.9554
+Confusion matrix
+
+ [[1421049      51]
+ [  66334      71]]
+
+True Positives(TP) =  1421049
+
+True Negatives(TN) =  71
+
+False Positives(FP) =  51
+
+False Negatives(FN) =  66334
+##################################################################################
+Observatiaon on model for booking_bool
+##################################################################################
+LightGBM Model accuracy score: 0.9938
+Training-set accuracy score: 0.9939
+Training set score: 0.9939
+Test set score: 0.9938
+Confusion matrix
+
+ [[1439123    6916]
+ [   2327   39139]]
+
+True Positives(TP) =  1439123
+
+True Negatives(TN) =  39139
+
+False Positives(FP) =  6916
+
+False Negatives(FN) =  2327
+##################################################################################
+Observatiaon on model for position
+##################################################################################
+
+

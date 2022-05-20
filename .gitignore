@@ -1,1 +1,5 @@
 Dataset/
+data/
+code/.ipynb_checkpoints/
+lightgbm.tar.gz
+lightgbm-3.3.2/
