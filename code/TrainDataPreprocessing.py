@@ -130,7 +130,7 @@ for index,row in df_comp_inv.iterrows():
     updatedRow = [str(x) for x in thisRow]
     competitors = total_comp[index]
     if competitors == 0:
-        rel_comp_inv.append(2.0)
+        rel_comp_inv.append(10.0)
         nan_count += 1
         continue
     score = 0
@@ -209,9 +209,13 @@ df_train = df.replace(np.nan, -1.0)
 datetime = list(df_train['date_time'])
 season = []
 time_of_day = []
+month = []
+hour = []
 for entry in datetime:
     date = int(entry[5:7])*100 + int(entry[8:10])
+    month.append(int(entry[5:7]))
     time = int(entry[11:13])*100 + int(entry[14:16])
+    hour.append(int(entry[11:13]))
     if date >= 320 and date <= 620:
         season.append(1)
     if date >= 621 and date <= 920:
@@ -230,9 +234,23 @@ for entry in datetime:
         time_of_day.append(4)
 df_train['season'] = season
 df_train['time_of_day'] = time_of_day
+df_train['month'] = month
+df_train['hour'] = hour
+# %%
+# Fixing Headers for testing and training the model
+df_train = df_train[['srch_id', 'site_id',
+       'visitor_location_country_id', 'visitor_hist_starrating',
+       'visitor_hist_adr_usd', 'prop_country_id', 'prop_id', 'prop_starrating',
+       'prop_review_score', 'prop_brand_bool', 'prop_location_score1',
+       'prop_location_score2', 'prop_log_historical_price',
+       'price_usd', 'promotion_flag', 'srch_destination_id',
+       'srch_length_of_stay', 'srch_booking_window', 'srch_adults_count',
+       'srch_children_count', 'srch_room_count', 'srch_saturday_night_bool',
+       'srch_query_affinity_score', 'orig_destination_distance', 'random_bool',
+       'total_comp', 'total_comp_rate', 'rel_comp_inv', 'avg_comp_rate_diff', 'season',
+       'time_of_day', 'month', 'hour', 'click_bool',  'booking_bool', 'position']]
 # %%
 # Writing dataframe into a csv so I don't have to do this again.
-df_train.to_csv("../Dataset/VU_DM_data/updated_training_set_VU_DM.csv")
+df_train.to_csv("../Dataset/VU_DM_data/fixed_training_set_VU_DM.csv")
 # %%
-
 # %%

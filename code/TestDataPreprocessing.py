@@ -59,7 +59,6 @@ for index,row in df_comp_rate.iterrows():
         else:
             score += int(float(item))
     total_comp_rate.append(float(score/competitors))
-print(nan_count, total_comp_rate.count(2.0))
 # %%
 # Creating a new dataframe with only competitors
 df_comp = pd.DataFrame(total_comp, columns=['total_comp'])
@@ -73,7 +72,7 @@ for index,row in df_comp_inv.iterrows():
     updatedRow = [str(x) for x in thisRow]
     competitors = total_comp[index]
     if competitors == 0:
-        rel_comp_inv.append(2.0)
+        rel_comp_inv.append(10.0)
         nan_count += 1
         continue
     score = 0
@@ -83,7 +82,6 @@ for index,row in df_comp_inv.iterrows():
         else:
             score += int(float(item))
     rel_comp_inv.append(float(score/competitors))
-print(nan_count, rel_comp_inv.count(2.0))
 df_comp['rel_comp_inv'] = rel_comp_inv
 # print(df_comp)
 # %% 
@@ -95,7 +93,7 @@ for index,row in df_comp_rate_diff.iterrows():
     updatedRow = [str(x) for x in thisRow]
     competitors = total_comp[index]
     if competitors == 0:
-        avg_comp_rate_diff.append(100.0)
+        avg_comp_rate_diff.append(800000.0)
         nan_count += 1
         continue
     score = 0
@@ -105,7 +103,6 @@ for index,row in df_comp_rate_diff.iterrows():
         else:
             score += int(float(item))
     avg_comp_rate_diff.append(float(score/competitors)*total_comp_rate[index])
-print(nan_count, avg_comp_rate_diff.count(100.0))
 df_comp['avg_comp_rate_diff'] = avg_comp_rate_diff
 # print(df_comp)
 # %%
@@ -118,9 +115,13 @@ df_test = df.replace(np.nan, -1.0)
 datetime = list(df_test['date_time'])
 season = []
 time_of_day = []
+month = []
+hour = []
 for entry in datetime:
     date = int(entry[5:7])*100 + int(entry[8:10])
+    month.append(int(entry[5:7]))
     time = int(entry[11:13])*100 + int(entry[14:16])
+    hour.append(int(entry[11:13]))
     if date >= 320 and date <= 620:
         season.append(1)
     if date >= 621 and date <= 920:
@@ -139,7 +140,22 @@ for entry in datetime:
         time_of_day.append(4)
 df_test['season'] = season
 df_test['time_of_day'] = time_of_day
+df_test['month'] = month
+df_test['hour'] = hour
+# %%
+# Fixing Headers for testing and training the model
+df_test = df_test[['srch_id', 'site_id',
+       'visitor_location_country_id', 'visitor_hist_starrating',
+       'visitor_hist_adr_usd', 'prop_country_id', 'prop_id', 'prop_starrating',
+       'prop_review_score', 'prop_brand_bool', 'prop_location_score1',
+       'prop_location_score2', 'prop_log_historical_price',
+       'price_usd', 'promotion_flag', 'srch_destination_id',
+       'srch_length_of_stay', 'srch_booking_window', 'srch_adults_count',
+       'srch_children_count', 'srch_room_count', 'srch_saturday_night_bool',
+       'srch_query_affinity_score', 'orig_destination_distance', 'random_bool',
+       'total_comp', 'total_comp_rate', 'rel_comp_inv', 'avg_comp_rate_diff', 'season',
+       'time_of_day', 'month', 'hour']]
 # %%
 # Writing dataframe into a csv so I don't have to do this again.
-df_test.to_csv("../Dataset/VU_DM_data/updated_test_set_VU_DM.csv")
+df_test.to_csv("../Dataset/VU_DM_data/fixed_test_set_VU_DM.csv")
 # %%

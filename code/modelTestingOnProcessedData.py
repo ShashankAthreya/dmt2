@@ -4,21 +4,22 @@ import numpy as np
 import pandas as pd 
 import matplotlib.pyplot as plt 
 import seaborn as sns 
-import warnings
-warnings.filterwarnings("ignore")
 from sklearn.model_selection import train_test_split
 import lightgbm as lgb
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
+import re
 # %%
 # Defining datafolder and importing dataframe
-datafile = '../Dataset/VU_DM_data/updated_training_set_VU_DM.csv'
-df_train = pd.read_csv(datafile)
+train_datafile = '../Dataset/VU_DM_data/fixed_training_set_VU_DM.csv'
+df_train = pd.read_csv(train_datafile, index_col=0)
+test_datafile = '../Dataset/VU_DM_data/fixed_test_set_VU_DM.csv'
+df_test = pd.read_csv(test_datafile, index_col=0)
+print(df_train.columns, df_test.columns)
 # %%
-# Declare feature vector and target variable and finding clickbool
-import re
+# Declare feature vector and target variable and finding click_bool
 df_train = df_train.rename(columns = lambda x:re.sub('[^A-Za-z0-9_]+', '', x))
-X_click = df_train.drop(['date_time','gross_bookings_usd', 'click_bool', 'position', 'booking_bool'], axis = 1)
+X_click = df_train.drop(['click_bool', 'position', 'booking_bool'], axis = 1)
 y_click = df_train['click_bool']
 
 X_click_train, X_click_test, y_click_train, y_click_test = train_test_split(X_click, y_click, test_size = 0.3, random_state = 0)
@@ -47,8 +48,8 @@ print('\nFalse Positives(FP) = ', cm[0,1])
 print('\nFalse Negatives(FN) = ', cm[1,0])
 
 # %%
-# Declare feature vector and target variable and finding clickbool
-X_book = df_train.drop(['date_time','gross_bookings_usd', 'position', 'booking_bool'], axis = 1)
+# Declare feature vector and target variable and finding booking_bool
+X_book = df_train.drop(['position', 'booking_bool'], axis = 1)
 y_book = df_train['booking_bool']
 
 X_book_train, X_book_test, y_book_train, y_book_test = train_test_split(X_book, y_book, test_size = 0.3, random_state = 0)
@@ -75,4 +76,16 @@ print('\nTrue Positives(TP) = ', cm[0,0])
 print('\nTrue Negatives(TN) = ', cm[1,1])
 print('\nFalse Positives(FP) = ', cm[0,1])
 print('\nFalse Negatives(FN) = ', cm[1,0])
+# %
 # %%
+# Predicting on Test data
+count = 0
+df_test = df_test.rename(columns = lambda x:re.sub('[^A-Za-z0-9_]+', '', x))
+X_click_test = df_test
+df_test['click_bool'] = clf_click.predict(X_click_test)
+X_book_test = df_test
+df_test['booking_bool'] = clf_book.predict(X_book_test)
+
+# %%
+# Writing dataframe into a csv so I don't have to do this again.
+df_test.to_csv("../Dataset/VU_DM_data/filled_test_set_VU_DM.csv")
