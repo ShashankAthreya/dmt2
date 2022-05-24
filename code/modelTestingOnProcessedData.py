@@ -17,6 +17,24 @@ test_datafile = '../Dataset/VU_DM_data/fixed_test_set_VU_DM.csv'
 df_test = pd.read_csv(test_datafile, index_col=0)
 print(df_train.columns, df_test.columns)
 # %%
+# Creating a stable dataframe for models
+df_noclick = df_train.loc[df_train['click_bool'] == 0]
+df_clickNoBook = df_train.loc[(df_train['click_bool'] == 1) & (df_train['booking_bool'] == 0)]
+df_book = df_train.loc[df_train['booking_bool'] == 1]
+# %%
+# Basic Operations
+df_train['rank'] = df_train['click_bool'] + df_train['booking_bool']
+print(list(df_train['rank']).count(0), list(df_train['rank']).count(1), list(df_train['rank']).count(2))
+# %%
+# Taking rows from the models
+print(df_noclick.shape)
+print(df_clickNoBook.shape) 
+print(df_book.shape)
+df_train = df_noclick.sample(n = 1300000)
+df_train = df_train.append(df_clickNoBook, ignore_index=True)
+df_train = df_train.append(df_book, ignore_index= True)
+df_train = df_train.sort_values(by = 'srch_id', ascending=True)
+# %%
 # Declare feature vector and target variable and finding click_bool
 df_train = df_train.rename(columns = lambda x:re.sub('[^A-Za-z0-9_]+', '', x))
 X_click = df_train.drop(['click_bool', 'position', 'booking_bool'], axis = 1)
@@ -85,7 +103,15 @@ X_click_test = df_test
 df_test['click_bool'] = clf_click.predict(X_click_test)
 X_book_test = df_test
 df_test['booking_bool'] = clf_book.predict(X_book_test)
-
 # %%
 # Writing dataframe into a csv so I don't have to do this again.
-df_test.to_csv("../Dataset/VU_DM_data/filled_test_set_VU_DM.csv")
+df_test.to_csv("../Dataset/VU_DM_data/new_filled_test_set_VU_DM.csv")
+# %%
+print(df_test.loc[(df_test['click_bool'] == 0) & (df_test['booking_bool'] == 0)])
+# %%
+print(df_test.loc[(df_test['click_bool'] == 0) & (df_test['booking_bool'] == 1)])
+# %%
+print(df_test.loc[(df_test['click_bool'] == 1) & (df_test['booking_bool'] == 0)])
+# %%
+print(df_test.loc[(df_test['click_bool'] == 1) & (df_test['booking_bool'] == 1)])
+# %%
