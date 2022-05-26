@@ -13,6 +13,7 @@ from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn import svm
+import ast
 # %%
 # Defining functions
 # Function to calculate range of values in a list
@@ -32,6 +33,42 @@ def correlation(dataframe):
 # Defining folder paths and dataframes for testing data
 testData = '../Dataset/VU_DM_data/test_set_VU_DM.csv'
 df_test = pd.read_csv(testData)
+# %%
+# Adding new columns for features
+total_prop = list(df_test['prop_id'].unique())  
+with open('../Dataset/VU_DM_data/abs_usd.txt') as f:
+    gross_usd_data = f.read()
+with open('../Dataset/VU_DM_data/abs_click.txt') as f:
+    all_clicks = f.read()
+with open('../Dataset/VU_DM_data/abs_book.txt') as f:
+    all_books = f.read()
+final_dict = ast.literal_eval(gross_usd_data)
+
+complete_usd = []
+props = list(df_test['prop_id'])
+for prop in props:
+    try:
+        complete_usd.append(final_dict[prop])
+    except:
+        complete_usd.append(0)
+        print(prop)
+df_test['abs_gross_booking_usd'] = complete_usd
+
+click_dict = ast.literal_eval(all_clicks)
+book_dict = ast.literal_eval(all_books)
+all_clicks = []
+all_books = []
+props = list(df_test['prop_id'])
+for prop in props:
+    try:
+        all_clicks.append(click_dict[prop])
+        all_books.append(book_dict[prop])
+    except:
+        all_clicks.append(0)
+        all_books.append(0)
+        print(prop)
+df_test['prev_click'] = all_clicks
+df_test['prev_books'] = all_books
 # %%
 # Creating a competitor dataframe
 df_comp_rate = df_test[['comp1_rate','comp2_rate','comp3_rate','comp4_rate','comp5_rate','comp6_rate','comp7_rate','comp8_rate']]
@@ -112,39 +149,11 @@ df.isnull().sum()
 df_test = df.replace(np.nan, -1.0)
 # %%
 # Converting Datetime into seasons and time of day.
-datetime = list(df_test['date_time'])
-season = []
-time_of_day = []
-month = []
-hour = []
-for entry in datetime:
-    date = int(entry[5:7])*100 + int(entry[8:10])
-    month.append(int(entry[5:7]))
-    time = int(entry[11:13])*100 + int(entry[14:16])
-    hour.append(int(entry[11:13]))
-    if date >= 320 and date <= 620:
-        season.append(1)
-    if date >= 621 and date <= 920:
-        season.append(2)
-    if date >= 921 and date <= 1220:
-        season.append(3)
-    if (date >= 1221 and date <= 1231) or (date >= 101 and date <= 319):
-        season.append(4)
-    if time >= 600 and time <= 1159:
-        time_of_day.append(1)
-    if time >= 1200 and time <= 1559:
-        time_of_day.append(2)
-    if time >= 1600 and time <= 1959:
-        time_of_day.append(3)
-    if (time >= 2000 and time <= 2359) or (time >= 0 and time <= 559):
-        time_of_day.append(4)
-df_test['season'] = season
-df_test['time_of_day'] = time_of_day
-df_test['month'] = month
-df_test['hour'] = hour
+df_test['weekday'] = pd.to_datetime(df_test['date_time'])
+df_test['weekday'] = df_test['weekday'].dt.day_of_week
 # %%
 # Fixing Headers for testing and training the model
-df_test = df_test[['srch_id', 'site_id',
+df_test = df_test[['srch_id', 'site_id', 'weekday',
        'visitor_location_country_id', 'visitor_hist_starrating',
        'visitor_hist_adr_usd', 'prop_country_id', 'prop_id', 'prop_starrating',
        'prop_review_score', 'prop_brand_bool', 'prop_location_score1',
@@ -153,9 +162,8 @@ df_test = df_test[['srch_id', 'site_id',
        'srch_length_of_stay', 'srch_booking_window', 'srch_adults_count',
        'srch_children_count', 'srch_room_count', 'srch_saturday_night_bool',
        'srch_query_affinity_score', 'orig_destination_distance', 'random_bool',
-       'total_comp', 'total_comp_rate', 'rel_comp_inv', 'avg_comp_rate_diff', 'season',
-       'time_of_day', 'month', 'hour']]
+       'total_comp', 'total_comp_rate', 'rel_comp_inv', 'avg_comp_rate_diff', 'abs_gross_booking_usd', 'prev_click', 'prev_books']]
 # %%
 # Writing dataframe into a csv so I don't have to do this again.
-df_test.to_csv("../Dataset/VU_DM_data/fixed_test_set_VU_DM.csv")
+df_test.to_csv("../Dataset/VU_DM_data/fixed_test_set_VU_DM.csv", index=False)
 # %%
